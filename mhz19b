@@ -1,0 +1,77 @@
+/*----------------------------------------------------------
+    MH-Z19 CO2 sensor  SAMPLE
+  ----------------------------------------------------------*/
+
+
+#include <MHZ19_uart.h>
+
+
+
+const int rx_pin = 9;	//Serial rx pin no
+const int tx_pin = 10;	//Serial tx pin no
+
+MHZ19_uart mhz19;
+
+/*----------------------------------------------------------
+    MH-Z19 CO2 sensor  setup
+  ----------------------------------------------------------*/
+void setup() {
+  Serial.begin(9600);
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);  // initialize with the I2C addr 0x3D (for the 128x64)
+ // display.display();
+  display.clearDisplay();
+ // display.drawPixel(10, 20, WHITE);
+ // display.display();
+//  delay(2000);
+ // display.clearDisplay();
+  display.setTextSize(2);
+//  display.setFont(*FreeMono24pt7b);
+  display.setTextColor(WHITE);
+  //display.setCursor(0,0);
+  display.print("Hello, world!"); display.println("Hello, world!");
+  display.display();
+  delay(2000);
+   
+  mhz19.begin(rx_pin, tx_pin);
+  Serial.print("MH-Z19 begin!");
+  mhz19.setAutoCalibration(false);
+ // Serial.print("MH-Z19 off autocalibration");
+ // while( mhz19.isWarming() ) {
+  Serial.print("MH-Z19 now warming up...  status:");Serial.println(mhz19.getStatus());
+  
+    delay(1000);
+//  }
+}
+
+/*----------------------------------------------------------
+    MH-Z19 CO2 sensor  loop
+  ----------------------------------------------------------*/
+void loop() {
+  int co2ppm = mhz19.getPPM();
+  int temp = mhz19.getTemperature();
+
+  Serial.print("co2: "); Serial.print(co2ppm);
+  Serial.print("   temp: "); Serial.print(temp);
+  Serial.print("   MH-Z19 status:");Serial.println(mhz19.getStatus());
+  
+
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.setTextSize(3);
+  display.print(co2ppm);
+  display.setCursor(70,16);
+  display.setTextSize(1);
+  display.println(" ppm CO2");
+  
+ // display.setTextSize(2);
+  display.print("Temp: ");
+  display.println(temp);
+//  display.setTextSize(1);
+  display.print("Status ");
+  display.println(mhz19.getStatus());
+  display.display();
+ 
+  
+  delay(3000);
+}
